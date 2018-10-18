@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 public class EventDataObject extends DataObject {
 	private final static String TABLE_NAME = "EVENT"; 
 	
-	private String guildId;
 	private String channelId;
 	private String occurence;
 	private String annonceDateId;
