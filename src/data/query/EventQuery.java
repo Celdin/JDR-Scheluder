@@ -1,5 +1,6 @@
 package data.query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import data.dataObject.EventDataObject;
@@ -10,13 +11,13 @@ public class EventQuery extends Query<EventDataObject> {
 
 	@Override
 	public List<EventDataObject> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<EventDataObject> eventDOs = new ArrayList<>();
+		return eventDOs;
 	}
 
 	public List<EventDataObject> getEventByChannelIds(List<String> channelsId) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<EventDataObject> eventDOs = new ArrayList<>();
+		return eventDOs;
 	}
 
 }
