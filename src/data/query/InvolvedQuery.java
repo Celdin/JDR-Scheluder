@@ -18,4 +18,9 @@ public class InvolvedQuery extends Query<InvolvedDataObject> {
 		return involvedDOs;
 	}
 
+	public void deleteEvent(String channelId) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

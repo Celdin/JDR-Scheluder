@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import data.dataObject.CookerDataObject;
-import net.dv8tion.jda.core.entities.TextChannel;
 
 public class CookerQuery extends Query<CookerDataObject> {
 
@@ -17,6 +16,11 @@ public class CookerQuery extends Query<CookerDataObject> {
 	public List<CookerDataObject> getCookerByEventId(Integer eventId) {
 		ArrayList<CookerDataObject> cookerDOs = new ArrayList<>();
 		return cookerDOs;
+	}
+
+	public void deleteEvent(String channelId) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

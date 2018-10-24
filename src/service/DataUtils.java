@@ -9,30 +9,30 @@ import data.dataObject.CookerDataObject;
 import data.dataObject.EventDataObject;
 import data.dataObject.InvolvedDataObject;
 import data.domain.Event;
-import data.domain.Server;
 import data.query.CookerQuery;
 import data.query.EventQuery;
 import data.query.InvolvedQuery;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
 public class DataUtils {
-	public static Map<Guild, Map<Channel, Event>> retriveAll(JDA jda) {
+	public static Map<Guild, Map<MessageChannel, Event>> retriveAll(JDA jda) {
 		EventQuery eventQuery = new EventQuery();
 		InvolvedQuery involvedQuery = new InvolvedQuery();
 		CookerQuery cookerQuery = new CookerQuery();
 		
-		Map<Guild, Map<Channel, Event>> servers = new HashMap<>();
+		Map<Guild, Map<MessageChannel, Event>> servers = new HashMap<>();
 		for(Guild guild : jda.getGuilds()) {
 			List<String> channelsId = new ArrayList<>();
 			for(Channel channel : guild.getTextChannels()) {
 				channelsId.add(channel.getId());
 			}
 			List<EventDataObject> eventDOs = eventQuery.getEventByChannelIds(channelsId);
-			Map<Channel, Event> channels = new HashMap<>();
+			Map<MessageChannel, Event> channels = new HashMap<>();
 			servers.put(guild, channels);
 			for(EventDataObject eventDO : eventDOs) {
 				TextChannel channel = guild.getTextChannelById(eventDO.getChannelId());
@@ -54,5 +54,15 @@ public class DataUtils {
 			}
 		}
 		return servers;
+	}
+	
+	public static void removeEvent(String channelId) {
+		EventQuery eventQuery = new EventQuery();
+		InvolvedQuery involvedQuery = new InvolvedQuery();
+		CookerQuery cookerQuery = new CookerQuery();
+		
+		involvedQuery.deleteEvent(channelId);
+		cookerQuery.deleteEvent(channelId);
+		eventQuery.deleteEvent(channelId);
 	}
 }
