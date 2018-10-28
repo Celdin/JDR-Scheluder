@@ -1,8 +1,6 @@
 package bot.listener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import bot.controler.MessageManager;
@@ -15,9 +13,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.MessageReaction;
 import net.dv8tion.jda.core.entities.PrivateChannel;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.react.GenericMessageReactionEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -67,15 +63,6 @@ public class JDRSchedListener extends ListenerAdapter {
 			Event botEvent = datas.get(event.getGuild()).get(event.getChannel());
 			if(event.getMessageId().equals(botEvent.getAnnonceDate().getId())) {
 				if(Statics.OUI.equals(event.getReactionEmote().getName())) {
-					List<User> users = new ArrayList<>();
-					Message message = event.getChannel().getMessageById(botEvent.getAnnonceDate().getId()).complete();
-					for(MessageReaction messageReaction : message.getReactions()) {
-						if(Statics.OUI.equals(messageReaction.getReactionEmote().getName())) {
-							List<User> reactionUsers = messageReaction.getUsers().complete();
-							users.addAll(reactionUsers);
-						}
-					}
-					botEvent.setInvolved(users);
 					MessageManager.refreshMessageCooker(event.getChannel(), botEvent);
 				}
 			}

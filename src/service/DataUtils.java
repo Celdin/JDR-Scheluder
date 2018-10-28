@@ -7,11 +7,9 @@ import java.util.Map;
 
 import data.dataObject.CookerDataObject;
 import data.dataObject.EventDataObject;
-import data.dataObject.InvolvedDataObject;
 import data.domain.Event;
 import data.query.CookerQuery;
 import data.query.EventQuery;
-import data.query.InvolvedQuery;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.Guild;
@@ -22,7 +20,6 @@ import net.dv8tion.jda.core.entities.User;
 public class DataUtils {
 	public static Map<Guild, Map<MessageChannel, Event>> retriveAll(JDA jda) {
 		EventQuery eventQuery = new EventQuery();
-		InvolvedQuery involvedQuery = new InvolvedQuery();
 		CookerQuery cookerQuery = new CookerQuery();
 		
 		Map<Guild, Map<MessageChannel, Event>> servers = new HashMap<>();
@@ -44,11 +41,6 @@ public class DataUtils {
 					cookers.put(jda.getUserById(cookerDO.getUserId()), cookerDO.getHaveCooked());
 				}
 				event.setHaveCooked(cookers);
-				List<User> involveds = new ArrayList<>();
-				for(InvolvedDataObject involvedDO : involvedQuery.getInvolvedByEventId(eventDO.getId())) {
-					involveds.add(jda.getUserById(involvedDO.getUserId()));
-				}
-				event.setInvolved(involveds);
 				event.setOccurence(eventDO.getOccurence());
 				channels.put(channel, event);
 			}
@@ -58,10 +50,8 @@ public class DataUtils {
 	
 	public static void removeEvent(String channelId) {
 		EventQuery eventQuery = new EventQuery();
-		InvolvedQuery involvedQuery = new InvolvedQuery();
 		CookerQuery cookerQuery = new CookerQuery();
 		
-		involvedQuery.deleteEvent(channelId);
 		cookerQuery.deleteEvent(channelId);
 		eventQuery.deleteEvent(channelId);
 	}

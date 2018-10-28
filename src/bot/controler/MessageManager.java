@@ -12,6 +12,7 @@ import message.BotMessage;
 import message.Statics;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.MessageReaction;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -35,7 +36,7 @@ public class MessageManager {
 			message.editMessage(String.format(BotMessage.HE_COOK, oui.get().getName())).complete();
 		} else {
 			Map<Integer, List<User>> involved = new HashMap<>();
-			List<User> coupables = new ArrayList<>(botEvent.getInvolved());
+			List<User> coupables = new ArrayList<>(getInvolved(channel.getMessageById(botEvent.getAnnonceDate().getId()).complete()));
 			coupables.removeAll(message.getReactions().stream().filter(reaction -> Statics.NON.equals(reaction.getReactionEmote().getName())).findFirst().get().getUsers().complete());
 			if(coupables.size() > 0) {
 				for(User user : coupables) {
@@ -58,5 +59,15 @@ public class MessageManager {
 				message.editMessage(BotMessage.WHO_COOK).complete(); 
 			}
 		}
+	}
+
+	private static List<User> getInvolved(Message message) {
+		Optional<MessageReaction> oui = message.getReactions().stream()
+			.filter(reaction -> Statics.OUI.equals(reaction.getReactionEmote().getName()))
+			.findFirst();
+		
+		if(oui.isPresent())
+			return oui.get().getUsers().complete();
+		return new ArrayList<>();
 	}
 }
