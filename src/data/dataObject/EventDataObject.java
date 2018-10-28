@@ -9,7 +9,7 @@ public class EventDataObject extends DataObject {
 	private final static String TABLE_NAME = "EVENT"; 
 	
 	private String channelId;
-	private String occurence;
+	private Long nextDate;
 	private String annonceDateId;
 	private String annonceCookerId;
 	

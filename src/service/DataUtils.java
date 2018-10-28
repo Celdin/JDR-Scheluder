@@ -41,7 +41,7 @@ public class DataUtils {
 					cookers.put(jda.getUserById(cookerDO.getUserId()), cookerDO.getHaveCooked());
 				}
 				event.setHaveCooked(cookers);
-				event.setOccurence(eventDO.getOccurence());
+				event.setNextDate(eventDO.getNextDate());
 				channels.put(channel, event);
 			}
 		}
@@ -54,5 +54,12 @@ public class DataUtils {
 		
 		cookerQuery.deleteEvent(channelId);
 		eventQuery.deleteEvent(channelId);
+	}
+
+	public static void save(Event event) {
+		EventQuery eventQuery = new EventQuery();
+		CookerQuery cookerQuery = new CookerQuery();
+		
+		cookerQuery.save(eventQuery.save(event), event);
 	}
 }

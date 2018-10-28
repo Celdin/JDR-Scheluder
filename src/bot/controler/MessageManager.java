@@ -1,9 +1,12 @@
 package bot.controler;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -14,15 +17,20 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageReaction;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import scheduler.EventScheduler;
 
 public class MessageManager {
+    private final static DateFormat DATE_FORMAT = DateFormat.getDateInstance(DateFormat.FULL, Locale.FRANCE);
+    private final static DateFormat TIME_FORMAT = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.FRANCE);
 
-	public static void createMessages(MessageReceivedEvent event, Event botEvent) {
-		Message annonceDateMessage = event.getChannel().sendMessage(String.format(BotMessage.ANNONCE, "Mercredi")).complete();
+	public static void createMessages(MessageChannel channel, Event botEvent) {
+		Calendar calendar = EventScheduler.getNextSchedul(botEvent);
+		Message annonceDateMessage = channel.sendMessage(String.format(BotMessage.ANNONCE, 
+                DATE_FORMAT.format(calendar.getTime()),
+                TIME_FORMAT.format(calendar.getTime()))).complete();
 		annonceDateMessage.addReaction(Statics.OUI).complete();
 		botEvent.setAnnonceDate(annonceDateMessage);
-		Message annonceCookerMessage = event.getChannel().sendMessage(BotMessage.WHO_COOK).complete();
+		Message annonceCookerMessage = channel.sendMessage(BotMessage.WHO_COOK).complete();
 		annonceCookerMessage.addReaction(Statics.OUI).complete();
 		annonceCookerMessage.addReaction(Statics.NON).complete();
 		botEvent.setAnnonceCooker(annonceCookerMessage);

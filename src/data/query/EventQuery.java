@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import data.dataObject.EventDataObject;
+import data.domain.Event;
 
 public class EventQuery extends Query<EventDataObject> {
 
@@ -19,8 +20,18 @@ public class EventQuery extends Query<EventDataObject> {
 	}
 
 	public void deleteEvent(String channelId) {
-		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public Integer save(Event event) {
+		return 0;
+	}
+
+	public Integer getId(Event event) {
+		return 0;
+	}
+	
+	
 
 }

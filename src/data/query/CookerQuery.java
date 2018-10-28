@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import data.dataObject.CookerDataObject;
+import data.domain.Event;
 
 public class CookerQuery extends Query<CookerDataObject> {
 
@@ -19,8 +20,18 @@ public class CookerQuery extends Query<CookerDataObject> {
 	}
 
 	public void deleteEvent(String channelId) {
-		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Integer save(Event event) {
+		EventQuery eventQuery = new EventQuery();
+		
+		return save(eventQuery.getId(event), event);
+	}
+	
+	public Integer save(Integer eventId, Event event) {
+		return 0;
 	}
 
 }

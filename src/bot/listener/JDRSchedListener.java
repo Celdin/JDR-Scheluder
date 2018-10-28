@@ -42,7 +42,7 @@ public class JDRSchedListener extends ListenerAdapter {
 				}else {
 					botEvent = datas.get(event.getGuild()).get(event.getChannel());
 				}
-				MessageManager.createMessages(event, botEvent);
+				MessageManager.createMessages(event.getChannel(), botEvent);
 				break;
 			case STOP:
 				DataUtils.removeEvent(event.getChannel().getId());
