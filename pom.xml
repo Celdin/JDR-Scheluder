@@ -24,8 +24,6 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5.1</version>
 				<configuration>
-					<executable>C:\oxitdev\java\jdk1.8.0_91\bin\javac.exe</executable>
-					<fork>true</fork>
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>
