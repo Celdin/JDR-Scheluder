@@ -25,6 +25,7 @@ public class MessageManager {
 
 	public static void createMessages(MessageChannel channel, Event botEvent) {
 		Calendar calendar = EventScheduler.getNextSchedul(botEvent);
+		botEvent.getAnnonceDate().unpin().complete();
 		Message annonceDateMessage = channel.sendMessage(String.format(BotMessage.ANNONCE, 
                 DATE_FORMAT.format(calendar.getTime()),
                 TIME_FORMAT.format(calendar.getTime()))).complete();
@@ -34,6 +35,7 @@ public class MessageManager {
 		annonceCookerMessage.addReaction(Statics.OUI).complete();
 		annonceCookerMessage.addReaction(Statics.NON).complete();
 		botEvent.setAnnonceCooker(annonceCookerMessage);
+		annonceDateMessage.pin().complete();
 	}
 	
 	public static void refreshMessageCooker(MessageChannel channel, Event botEvent) {

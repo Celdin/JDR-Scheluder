@@ -34,7 +34,7 @@ public class EventScheduler {
 		Calendar schedul = Calendar.getInstance();
 		schedul.setTime(new Date(jdrEvent.getNextDate()));
 		while(Calendar.getInstance().getTimeInMillis() > schedul.getTimeInMillis() - 10000) {
-			schedul.add(Calendar.DAY_OF_WEEK, 14);
+			schedul.add(Calendar.WEEK_OF_YEAR, 2);
 		}
 		return schedul;
 	}

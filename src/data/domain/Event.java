@@ -10,7 +10,7 @@ import net.dv8tion.jda.core.entities.User;
 @Data
 public class Event {
 	private Map<User, Integer> haveCooked = new HashMap<>();
-	private Long nextDate = 1540400400L;
+	private Long nextDate = 1540400400000L;
 	private Message annonceDate;
 	private Message annonceCooker;
 }
