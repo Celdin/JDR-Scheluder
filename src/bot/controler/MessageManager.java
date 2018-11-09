@@ -25,7 +25,9 @@ public class MessageManager {
 
 	public static void createMessages(MessageChannel channel, Event botEvent) {
 		Calendar calendar = EventScheduler.getNextSchedul(botEvent);
-		botEvent.getAnnonceDate().unpin().complete();
+		if(botEvent.getAnnonceDate()!=null) {
+			botEvent.getAnnonceDate().unpin().complete();
+		}
 		Message annonceDateMessage = channel.sendMessage(String.format(BotMessage.ANNONCE, 
                 DATE_FORMAT.format(calendar.getTime()),
                 TIME_FORMAT.format(calendar.getTime()))).complete();
