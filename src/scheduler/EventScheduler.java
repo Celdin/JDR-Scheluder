@@ -3,7 +3,7 @@ package scheduler;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -32,8 +32,9 @@ public class EventScheduler {
 		}
 	}
 	public static Calendar getNextSchedul(Event jdrEvent) {
-		Calendar schedul = Calendar.getInstance(Locale.FRANCE);
+		Calendar schedul = Calendar.getInstance();
 		schedul.setTime(new Date(jdrEvent.getNextDate()));
+		schedul.setTimeZone(TimeZone.getTimeZone("ECT"));
 		while(Calendar.getInstance().getTimeInMillis() > schedul.getTimeInMillis() - 10000) {
 			schedul.add(Calendar.WEEK_OF_YEAR, 2);
 		}
