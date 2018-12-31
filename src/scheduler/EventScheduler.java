@@ -33,7 +33,7 @@ public class EventScheduler {
 
 			long initialDelay = event.getNextDate() - Calendar.getInstance().getTimeInMillis();
 			
-			executor.scheduleAtFixedRate(new EventRunnable(event.getAnnonceDate().getTextChannel(), event), 10000, 10000, TimeUnit.MILLISECONDS);
+			executor.scheduleAtFixedRate(new EventRunnable(event.getAnnonceDate().getTextChannel(), event), initialDelay, PERIOD, TimeUnit.MILLISECONDS);
 		}
 	}
 	public static Calendar getNextSchedul(Event jdrEvent) {
