@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.junit.platform.commons.util.StringUtils;
+
 import data.dataObject.CookerDataObject;
 import data.dataObject.DataObject;
 import data.dataObject.EventDataObject;
@@ -43,7 +45,12 @@ public class PostgreSQLDriver {
 	}
 
 	private static void connect() throws SQLException {
-		connection = DriverManager.getConnection("jdbc:" + url, user, password);
+		if(url != null) {
+			connection = DriverManager.getConnection("jdbc:postgresql://" + url + "?sslmode=require", user, password);
+		} else {
+			String dbUrl = System.getenv("JDBC_DATABASE_URL");
+			connection = DriverManager.getConnection(dbUrl);
+		}
 		System.out.println("PostgreSQLDriver.connect");
 	}
 	
