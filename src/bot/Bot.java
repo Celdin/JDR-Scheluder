@@ -1,5 +1,6 @@
 package bot;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 import javax.security.auth.login.LoginException;
@@ -12,12 +13,13 @@ import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
+import scheduler.EventScheduler;
 import service.DataUtils;
 
 public class Bot {
 	private JDA jda;
 
-	public Bot(String token) throws LoginException, InterruptedException {
+	public Bot(String token) throws LoginException, InterruptedException, SQLException {
 		jda = new JDABuilder(AccountType.BOT).setToken(token).setBulkDeleteSplittingEnabled(false).build();
 		jda.awaitReady();
 		jda.getPresence().setGame(Game.of(Game.GameType.DEFAULT, "planifier"));
@@ -29,5 +31,6 @@ public class Bot {
 		}
 		Map<Guild, Map<MessageChannel, Event>> datas = DataUtils.retriveAll(jda);
 		jda.addEventListener(new JDRSchedListener(datas, jda));
+		EventScheduler.update(DataUtils.retriveAllEvents(jda));
 	}
 }

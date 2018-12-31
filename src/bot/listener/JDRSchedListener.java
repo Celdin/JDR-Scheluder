@@ -1,10 +1,12 @@
 package bot.listener;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import bot.controler.MessageManager;
 import data.domain.Event;
+import data.query.EventQuery;
 import lombok.AllArgsConstructor;
 import message.BotMessage;
 import message.Command;
@@ -17,6 +19,7 @@ import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.react.GenericMessageReactionEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import scheduler.EventScheduler;
 import service.DataUtils;
 
 @AllArgsConstructor
@@ -40,13 +43,19 @@ public class JDRSchedListener extends ListenerAdapter {
 					botEvent = new Event();
 					datas.get(event.getGuild()).put(event.getChannel(), botEvent);
 				}else {
+					delete(event);
 					botEvent = datas.get(event.getGuild()).get(event.getChannel());
 				}
 				MessageManager.createMessages(event.getChannel(), botEvent);
+				try {
+					EventQuery.create(botEvent);
+					EventScheduler.update(DataUtils.retriveAllEvents(jda));
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 				break;
 			case STOP:
-				DataUtils.removeEvent(event.getChannel().getId());
-				datas.get(event.getGuild()).remove(event.getChannel());
+				delete(event);
 				break;
 			default:
 				PrivateChannel privateChannel = event.getAuthor().openPrivateChannel().complete();
@@ -54,6 +63,15 @@ public class JDRSchedListener extends ListenerAdapter {
 				break;
 			}
 		}
+	}
+
+	private void delete(MessageReceivedEvent event) {
+		try {
+			DataUtils.removeEvent(event.getChannel().getId());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		datas.get(event.getGuild()).remove(event.getChannel());
 	}
 	
 	@Override

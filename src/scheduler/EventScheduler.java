@@ -9,17 +9,22 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import data.domain.Event;
-import net.dv8tion.jda.core.JDA;
 
 
 public class EventScheduler {
 	// 14 Jours
-	private final static int PERIOD = 7 * 24 * 60 * 60 * 1000 * 2;
+	private final static int PERIOD = 
+			7 // DAY
+			* 24 // TO HOURS
+			* 60 // TO MINUTES
+			* 60 // TO SENCONDS
+			* 1000 // TO MILISECONDS
+			* 2; // TWO WEEKS
 
 	private static ScheduledExecutorService executor;
 	
 
-	public static void update(JDA jda, List<Event> events) {
+	public static void update(List<Event> events) {
 		if (executor != null) {
 			executor.shutdown();
 		}
@@ -28,7 +33,7 @@ public class EventScheduler {
 
 			long initialDelay = event.getNextDate() - Calendar.getInstance().getTimeInMillis();
 			
-			executor.scheduleAtFixedRate(new EventRunnable(event.getAnnonceDate().getTextChannel(), event), initialDelay, PERIOD, TimeUnit.MILLISECONDS);
+			executor.scheduleAtFixedRate(new EventRunnable(event.getAnnonceDate().getTextChannel(), event), 10000, 10000, TimeUnit.MILLISECONDS);
 		}
 	}
 	public static Calendar getNextSchedul(Event jdrEvent) {
@@ -38,6 +43,7 @@ public class EventScheduler {
 		while(Calendar.getInstance().getTimeInMillis() > schedul.getTimeInMillis() - 10000) {
 			schedul.add(Calendar.WEEK_OF_YEAR, 2);
 		}
+		jdrEvent.setNextDate(schedul.getTimeInMillis());
 		return schedul;
 	}
 }

@@ -1,5 +1,6 @@
 package service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,9 +17,10 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 
 public class DataUtils {
-	public static Map<Guild, Map<MessageChannel, Event>> retriveAll(JDA jda) {
+	public static Map<Guild, Map<MessageChannel, Event>> retriveAll(JDA jda) throws SQLException {
 		EventQuery eventQuery = new EventQuery();
 		CookerQuery cookerQuery = new CookerQuery();
 		
@@ -34,8 +36,12 @@ public class DataUtils {
 			for(EventDataObject eventDO : eventDOs) {
 				TextChannel channel = guild.getTextChannelById(eventDO.getChannelId());
 				Event event = new Event();
-				event.setAnnonceCooker(channel.getMessageById(eventDO.getAnnonceCookerId()).complete());
-				event.setAnnonceDate(channel.getMessageById(eventDO.getAnnonceDateId()).complete());
+				try {
+					event.setAnnonceCooker(channel.getMessageById(eventDO.getAnnonceCookerId()).complete());
+					event.setAnnonceDate(channel.getMessageById(eventDO.getAnnonceDateId()).complete());
+				} catch (ErrorResponseException e) {
+					System.err.println("Message non retrouvé.");
+				}
 				Map<User, Integer> cookers = new HashMap<>();
 				for(CookerDataObject cookerDO : cookerQuery.getCookerByEventId(eventDO.getId())) {
 					cookers.put(jda.getUserById(cookerDO.getUserId()), cookerDO.getHaveCooked());
@@ -47,19 +53,32 @@ public class DataUtils {
 		}
 		return servers;
 	}
+	public static List<Event> retriveAllEvents(JDA jda) throws SQLException {
+		EventQuery eventQuery = new EventQuery();
+		CookerQuery cookerQuery = new CookerQuery();
+		List<Event> events = new ArrayList<>();
+		List<EventDataObject> eventDOs = eventQuery.getAll();
+		for(EventDataObject eventDO : eventDOs) {
+			TextChannel channel = jda.getTextChannelById(eventDO.getChannelId());
+			Event event = new Event();
+			event.setAnnonceCooker(channel.getMessageById(eventDO.getAnnonceCookerId()).complete());
+			event.setAnnonceDate(channel.getMessageById(eventDO.getAnnonceDateId()).complete());
+			Map<User, Integer> cookers = new HashMap<>();
+			for(CookerDataObject cookerDO : cookerQuery.getCookerByEventId(eventDO.getId())) {
+				cookers.put(jda.getUserById(cookerDO.getUserId()), cookerDO.getHaveCooked());
+			}
+			event.setHaveCooked(cookers);
+			event.setNextDate(eventDO.getNextDate());
+			events.add(event);
+		}
+		return events;
+	}
 	
-	public static void removeEvent(String channelId) {
+	public static void removeEvent(String channelId) throws SQLException {
 		EventQuery eventQuery = new EventQuery();
 		CookerQuery cookerQuery = new CookerQuery();
 		
 		cookerQuery.deleteEvent(channelId);
 		eventQuery.deleteEvent(channelId);
-	}
-
-	public static void save(Event event) {
-		EventQuery eventQuery = new EventQuery();
-		CookerQuery cookerQuery = new CookerQuery();
-		
-		cookerQuery.save(eventQuery.save(event), event);
 	}
 }
