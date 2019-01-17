@@ -1,15 +1,14 @@
 package bot.listener;
 
-import static java.lang.String.format;
-import static message.BotMessage.*;
+import static bot.controler.MessageManager.createMessages;
+import static bot.controler.MessageManager.displayCooker;
+import static bot.controler.MessageManager.refreshMessageCooker;
+import static message.BotMessage.MAUVAISE_COMMANDE;
 
 import java.sql.SQLException;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import bot.controler.MessageManager;
 import data.domain.Event;
 import data.query.EventQuery;
 import lombok.AllArgsConstructor;
@@ -20,7 +19,6 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.PrivateChannel;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.react.GenericMessageReactionEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -43,8 +41,8 @@ public class JDRSchedListener extends ListenerAdapter {
 			if(command != null) {
 				switch (command) {
 				case START:
-					botEvent = getEvent(event);
-					MessageManager.createMessages(event.getChannel(), botEvent);
+					botEvent = initEvent(event);
+					createMessages(event.getChannel(), botEvent);
 					try {
 						EventQuery.create(botEvent);
 						EventScheduler.update(DataUtils.retriveAllEvents(jda));
@@ -68,7 +66,7 @@ public class JDRSchedListener extends ListenerAdapter {
 		}
 	}
 
-	private Event getEvent(MessageReceivedEvent event) {
+	private Event initEvent(MessageReceivedEvent event) {
 		Event botEvent = null;
 		if(!datas.containsKey(event.getGuild())) {
 			datas.put(event.getGuild(), new HashMap<>());
@@ -81,25 +79,6 @@ public class JDRSchedListener extends ListenerAdapter {
 			botEvent = datas.get(event.getGuild()).get(event.getChannel());
 		}
 		return botEvent;
-	}
-
-	private void displayCooker(Event botEvent) {
-		Message annonceDate = botEvent.getAnnonceDate();
-		String message = botEvent.getHaveCooked().keySet().stream()
-				.sorted(Comparator.comparing(user -> botEvent.getHaveCooked().get(user)).reversed())
-				.map(user -> format(COOKERS, getUsername(annonceDate.getGuild(), user), botEvent.getHaveCooked().get(user).toString()))
-				.collect(Collectors.joining( "\n" ));
-		annonceDate.getChannel().sendMessage(message).complete();
-		
-	}
-
-	private String getUsername(Guild guild, User user) {
-		String nickName = getNickname(guild, user);
-		return nickName != null?nickName:user.getName();
-	}
-
-	private String getNickname(Guild guild, User user) {
-		return guild.getMemberById(user.getId()).getNickname();
 	}
 
 	private void delete(MessageReceivedEvent event) {
@@ -118,11 +97,11 @@ public class JDRSchedListener extends ListenerAdapter {
 			Event botEvent = datas.get(event.getGuild()).get(event.getChannel());
 			if(event.getMessageId().equals(botEvent.getAnnonceDate().getId())) {
 				if(Statics.OUI.equals(event.getReactionEmote().getName())) {
-					MessageManager.refreshMessageCooker(event.getChannel(), botEvent);
+					refreshMessageCooker(event.getChannel(), botEvent);
 				}
 			}
 			if(event.getMessageId().equals(botEvent.getAnnonceCooker().getId())) {
-				MessageManager.refreshMessageCooker(event.getChannel(), botEvent);
+				refreshMessageCooker(event.getChannel(), botEvent);
 			}
 		}
 	}

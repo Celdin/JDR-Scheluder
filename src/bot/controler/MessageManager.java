@@ -1,18 +1,24 @@
 package bot.controler;
 
+import static java.lang.String.format;
+import static message.BotMessage.COOKERS;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import data.domain.Event;
 import message.BotMessage;
 import message.Statics;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageReaction;
@@ -42,10 +48,11 @@ public class MessageManager {
 	
 	public static void refreshMessageCooker(MessageChannel channel, Event botEvent) {
 		Message message = channel.getMessageById(botEvent.getAnnonceCooker().getId()).complete();
+		Guild guild = botEvent.getAnnonceCooker().getGuild();
 		Optional<User> oui = message.getReactions().stream().filter(reaction -> Statics.OUI.equals(reaction.getReactionEmote().getName())).findAny().get().getUsers().stream().filter(user -> !channel.getJDA().getSelfUser().equals(user)).findFirst();
 
 		if(oui.isPresent()) {
-			message.editMessage(String.format(BotMessage.HE_COOK, oui.get().getName())).complete();
+			message.editMessage(String.format(BotMessage.HE_COOK, getUsername(guild, oui.get()))).complete();
 		} else {
 			Map<Integer, List<User>> involved = new HashMap<>();
 			List<User> coupables = new ArrayList<>(getInvolved(channel.getMessageById(botEvent.getAnnonceDate().getId()).complete()));
@@ -66,11 +73,30 @@ public class MessageManager {
 				}
 				coupables = new ArrayList<>(involved.get(Collections.min(involved.keySet())));
 				Collections.shuffle(coupables);
-				message.editMessage(BotMessage.WHO_COOK + "\n" + coupables.get(0).getName() + " ?").complete(); 
+				message.editMessage(BotMessage.WHO_COOK + "\n" + getUsername(guild, coupables.get(0)) + " ?").complete(); 
 			} else {
 				message.editMessage(BotMessage.WHO_COOK).complete(); 
 			}
 		}
+	}
+
+	public static void displayCooker(Event botEvent) {
+		Message annonceDate = botEvent.getAnnonceDate();
+		String message = botEvent.getHaveCooked().keySet().stream()
+				.sorted(Comparator.comparing(user -> botEvent.getHaveCooked().get(user)).reversed())
+				.map(user -> format(COOKERS, getUsername(annonceDate.getGuild(), user), botEvent.getHaveCooked().get(user).toString()))
+				.collect(Collectors.joining( "\n" ));
+		annonceDate.getChannel().sendMessage(message).complete();
+		
+	}
+
+	public static String getUsername(Guild guild, User user) {
+		String nickName = getNickname(guild, user);
+		return nickName != null?nickName:user.getName();
+	}
+
+	private static String getNickname(Guild guild, User user) {
+		return guild.getMemberById(user.getId()).getNickname();
 	}
 
 	private static List<User> getInvolved(Message message) {
