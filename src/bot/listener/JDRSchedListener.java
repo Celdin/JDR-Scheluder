@@ -52,7 +52,7 @@ public class JDRSchedListener extends ListenerAdapter {
 					delete(event);
 					break;
 				case COOKER:
-					botEvent = getEvent(event);
+					botEvent = datas.get(event.getGuild()).get(event.getChannel());
 					displayCooker(botEvent);
 					break;
 				default:
