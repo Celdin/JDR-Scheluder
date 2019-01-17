@@ -30,9 +30,7 @@ public class EventScheduler {
 		}
 		executor = Executors.newScheduledThreadPool((int) (events.size()));
 		for(Event event : events) {
-
 			long initialDelay = event.getNextDate() - Calendar.getInstance().getTimeInMillis();
-			
 			executor.scheduleAtFixedRate(new EventRunnable(event.getAnnonceDate().getTextChannel(), event), initialDelay, PERIOD, TimeUnit.MILLISECONDS);
 		}
 	}
