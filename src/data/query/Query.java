@@ -102,7 +102,7 @@ public abstract class Query<T extends DataObject> {
 	
 	protected static void delete(DataObject dataObject) throws SQLException {
 		String query = "DELETE FROM %s WHERE %s = %s";
-		query = format(query, dataObject.getTableName(), DataObject.COLUMN_ID + " = " + dataObject.getId());
+		query = format(query, dataObject.getTableName(), DataObject.COLUMN_ID, dataObject.getId());
 		Connection connection = PostgreSQLDriver.getConnection();
 		Statement statement = connection.createStatement();
 		System.out.println(query);
