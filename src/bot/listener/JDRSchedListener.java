@@ -1,6 +1,10 @@
 package bot.listener;
 
+import static java.lang.String.format;
+import static message.BotMessage.*;
+
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -9,7 +13,6 @@ import bot.controler.MessageManager;
 import data.domain.Event;
 import data.query.EventQuery;
 import lombok.AllArgsConstructor;
-import message.BotMessage;
 import message.Command;
 import message.Statics;
 import net.dv8tion.jda.core.JDA;
@@ -58,7 +61,7 @@ public class JDRSchedListener extends ListenerAdapter {
 					break;
 				default:
 					PrivateChannel privateChannel = event.getAuthor().openPrivateChannel().complete();
-					privateChannel.sendMessage(BotMessage.MAUVAISE_COMMANDE);
+					privateChannel.sendMessage(MAUVAISE_COMMANDE);
 					break;
 				}
 			}
@@ -83,18 +86,19 @@ public class JDRSchedListener extends ListenerAdapter {
 	private void displayCooker(Event botEvent) {
 		Message annonceDate = botEvent.getAnnonceDate();
 		String message = botEvent.getHaveCooked().keySet().stream()
-				.map(user -> 
-				getUserName(annonceDate.getGuild(), user) + " a cuisiné(e) " + botEvent.getHaveCooked().get(user).toString() + " fois").collect(Collectors.joining( "\n" ));
+				.sorted(Comparator.comparing(user -> botEvent.getHaveCooked().get(user)).reversed())
+				.map(user -> format(COOKERS, getUsername(annonceDate.getGuild(), user), botEvent.getHaveCooked().get(user).toString()))
+				.collect(Collectors.joining( "\n" ));
 		annonceDate.getChannel().sendMessage(message).complete();
 		
 	}
 
-	private String getUserName(Guild guild, User user) {
-		String nickName = getNickName(guild, user);
+	private String getUsername(Guild guild, User user) {
+		String nickName = getNickname(guild, user);
 		return nickName != null?nickName:user.getName();
 	}
 
-	private String getNickName(Guild guild, User user) {
+	private String getNickname(Guild guild, User user) {
 		return guild.getMemberById(user.getId()).getNickname();
 	}
 
