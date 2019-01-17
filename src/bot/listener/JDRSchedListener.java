@@ -35,28 +35,31 @@ public class JDRSchedListener extends ListenerAdapter {
 		if(!event.getAuthor().equals(jda.getSelfUser())) {
 			Message message = event.getMessage();
 			Event botEvent = null;
-			switch (Command.findByCommand(message.getContentDisplay().split(" ")[0])) {
-			case START:
-				botEvent = getEvent(event);
-				MessageManager.createMessages(event.getChannel(), botEvent);
-				try {
-					EventQuery.create(botEvent);
-					EventScheduler.update(DataUtils.retriveAllEvents(jda));
-				} catch (SQLException e) {
-					e.printStackTrace();
+			Command command = Command.findByCommand(message.getContentDisplay().split(" ")[0]);
+			if(command != null) {
+				switch (command) {
+				case START:
+					botEvent = getEvent(event);
+					MessageManager.createMessages(event.getChannel(), botEvent);
+					try {
+						EventQuery.create(botEvent);
+						EventScheduler.update(DataUtils.retriveAllEvents(jda));
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					break;
+				case STOP:
+					delete(event);
+					break;
+				case COOKER:
+					botEvent = getEvent(event);
+					displayCooker(botEvent);
+					break;
+				default:
+					PrivateChannel privateChannel = event.getAuthor().openPrivateChannel().complete();
+					privateChannel.sendMessage(BotMessage.MAUVAISE_COMMANDE);
+					break;
 				}
-				break;
-			case STOP:
-				delete(event);
-				break;
-			case COOKER:
-				botEvent = getEvent(event);
-				displayCooker(botEvent);
-				break;
-			default:
-				PrivateChannel privateChannel = event.getAuthor().openPrivateChannel().complete();
-				privateChannel.sendMessage(BotMessage.MAUVAISE_COMMANDE);
-				break;
 			}
 		}
 	}
