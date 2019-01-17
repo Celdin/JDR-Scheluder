@@ -82,9 +82,9 @@ public class JDRSchedListener extends ListenerAdapter {
 	private void displayCooker(Event botEvent) {
 		String message = botEvent.getHaveCooked().keySet().stream()
 				.map(user -> 
-				botEvent.getAnnonceDate().getGuild().getMemberById(user.getId()).getNickname() != null?
+				(botEvent.getAnnonceDate().getGuild().getMemberById(user.getId()).getNickname() != null?
 						botEvent.getAnnonceDate().getGuild().getMemberById(user.getId()).getNickname():
-						user.getName() + " a cuisiné " + botEvent.getHaveCooked().get(user).toString() + " fois").collect(Collectors.joining( "\n" ));
+						user.getName()) + " a cuisinÃ© " + botEvent.getHaveCooked().get(user).toString() + " fois").collect(Collectors.joining( "\n" ));
 		botEvent.getAnnonceDate().getChannel().sendMessage(message).complete();
 		
 	}
