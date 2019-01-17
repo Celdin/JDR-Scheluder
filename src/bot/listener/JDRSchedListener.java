@@ -3,6 +3,7 @@ package bot.listener;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import bot.controler.MessageManager;
 import data.domain.Event;
@@ -33,19 +34,10 @@ public class JDRSchedListener extends ListenerAdapter {
 		super.onMessageReceived(event);
 		if(!event.getAuthor().equals(jda.getSelfUser())) {
 			Message message = event.getMessage();
+			Event botEvent = null;
 			switch (Command.findByCommand(message.getContentDisplay().split(" ")[0])) {
 			case START:
-				Event botEvent = null;
-				if(!datas.containsKey(event.getGuild())) {
-					datas.put(event.getGuild(), new HashMap<>());
-				}
-				if(!datas.get(event.getGuild()).containsKey(event.getChannel())) {
-					botEvent = new Event();
-					datas.get(event.getGuild()).put(event.getChannel(), botEvent);
-				}else {
-					delete(event);
-					botEvent = datas.get(event.getGuild()).get(event.getChannel());
-				}
+				botEvent = getEvent(event);
 				MessageManager.createMessages(event.getChannel(), botEvent);
 				try {
 					EventQuery.create(botEvent);
@@ -57,12 +49,37 @@ public class JDRSchedListener extends ListenerAdapter {
 			case STOP:
 				delete(event);
 				break;
+			case COOKER:
+				botEvent = getEvent(event);
+				displayCooker(botEvent);
+				break;
 			default:
 				PrivateChannel privateChannel = event.getAuthor().openPrivateChannel().complete();
 				privateChannel.sendMessage(BotMessage.MAUVAISE_COMMANDE);
 				break;
 			}
 		}
+	}
+
+	private Event getEvent(MessageReceivedEvent event) {
+		Event botEvent = null;
+		if(!datas.containsKey(event.getGuild())) {
+			datas.put(event.getGuild(), new HashMap<>());
+		}
+		if(!datas.get(event.getGuild()).containsKey(event.getChannel())) {
+			botEvent = new Event();
+			datas.get(event.getGuild()).put(event.getChannel(), botEvent);
+		}else {
+			delete(event);
+			botEvent = datas.get(event.getGuild()).get(event.getChannel());
+		}
+		return botEvent;
+	}
+
+	private void displayCooker(Event botEvent) {
+		String message = botEvent.getHaveCooked().keySet().stream().map(user -> user + " a cuisiné " + botEvent.getHaveCooked().get(user) + "fois").collect(Collectors.joining( "\n" ));
+		botEvent.getAnnonceDate().getChannel().sendMessage(message).complete();
+		
 	}
 
 	private void delete(MessageReceivedEvent event) {

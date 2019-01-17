@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Command {
 	START(Statics.START_CMD + "START", ""),
+	COOKER(Statics.START_CMD + "COOKERS", ""),
 	STOP(Statics.START_CMD + "START", "");
 	
 	String text;
