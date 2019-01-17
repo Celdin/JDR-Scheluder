@@ -17,6 +17,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.PrivateChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.react.GenericMessageReactionEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -80,13 +81,21 @@ public class JDRSchedListener extends ListenerAdapter {
 	}
 
 	private void displayCooker(Event botEvent) {
+		Message annonceDate = botEvent.getAnnonceDate();
 		String message = botEvent.getHaveCooked().keySet().stream()
 				.map(user -> 
-				(botEvent.getAnnonceDate().getGuild().getMemberById(user.getId()).getNickname() != null?
-						botEvent.getAnnonceDate().getGuild().getMemberById(user.getId()).getNickname():
-						user.getName()) + " a cuisiné " + botEvent.getHaveCooked().get(user).toString() + " fois").collect(Collectors.joining( "\n" ));
-		botEvent.getAnnonceDate().getChannel().sendMessage(message).complete();
+				getUserName(annonceDate.getGuild(), user) + " a cuisiné(e) " + botEvent.getHaveCooked().get(user).toString() + " fois").collect(Collectors.joining( "\n" ));
+		annonceDate.getChannel().sendMessage(message).complete();
 		
+	}
+
+	private String getUserName(Guild guild, User user) {
+		String nickName = getNickName(guild, user);
+		return nickName != null?nickName:user.getName();
+	}
+
+	private String getNickName(Guild guild, User user) {
+		return guild.getMemberById(user.getId()).getNickname();
 	}
 
 	private void delete(MessageReceivedEvent event) {
