@@ -49,14 +49,25 @@ public class MessageManager {
 	public static void refreshMessageCooker(MessageChannel channel, Event botEvent) {
 		Message message = channel.getMessageById(botEvent.getAnnonceCooker().getId()).complete();
 		Guild guild = botEvent.getAnnonceCooker().getGuild();
-		Optional<User> oui = message.getReactions().stream().filter(reaction -> Statics.OUI.equals(reaction.getReactionEmote().getName())).findAny().get().getUsers().stream().filter(user -> !channel.getJDA().getSelfUser().equals(user)).findFirst();
+		Optional<MessageReaction> elu = message.getReactions().stream().filter(reaction -> Statics.OUI.equals(reaction.getReactionEmote().getName())).findAny();
+		Optional<User> oui = Optional.empty();
+		if(elu.isPresent()) {
+			oui = elu.get().getUsers().stream().filter(user -> !channel.getJDA().getSelfUser().equals(user)).findFirst();
+		} else {
+			message.addReaction(Statics.OUI).complete();
+		}
 
 		if(oui.isPresent()) {
 			message.editMessage(String.format(BotMessage.HE_COOK, getUsername(guild, oui.get()))).complete();
 		} else {
 			Map<Integer, List<User>> involved = new HashMap<>();
 			List<User> coupables = new ArrayList<>(getInvolved(channel.getMessageById(botEvent.getAnnonceDate().getId()).complete()));
-			coupables.removeAll(message.getReactions().stream().filter(reaction -> Statics.NON.equals(reaction.getReactionEmote().getName())).findFirst().get().getUsers().complete());
+			Optional<MessageReaction> indispo = message.getReactions().stream().filter(reaction -> Statics.NON.equals(reaction.getReactionEmote().getName())).findFirst();
+			if(indispo.isPresent()) {
+				coupables.removeAll(indispo.get().getUsers().complete());
+			} else {
+				message.addReaction(Statics.NON).complete();
+			}
 			if(coupables.size() > 0) {
 				for(User user : coupables) {
 					if(botEvent.getHaveCooked().containsKey(user)) {
