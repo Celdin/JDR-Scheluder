@@ -97,7 +97,7 @@ public class JDRSchedListener extends ListenerAdapter {
 			Event botEvent = datas.get(event.getGuild()).get(event.getChannel());
 			try {
 				if (event.getMessageId().equals(botEvent.getAnnonceDate().getId())) {
-					if (Statics.OUI.equals(event.getReactionEmote().getName())) {
+					if (Statics.NON.equals(event.getReactionEmote().getName())) {
 						refreshMessageCooker(event.getChannel(), botEvent);
 
 					}

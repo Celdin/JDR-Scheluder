@@ -116,6 +116,7 @@ public class MessageManager {
 				String mecreants = String.join(", ", noms.subList(0, noms.size() - 1)) + " et " + noms.get(noms.size() - 1);
 				messageCooker.editMessage(format(BotMessage.SONT_PAS_LA, mecreants)).complete();
 			}
+			messageCooker.clearReactions().complete();
 		}
 	}
 
