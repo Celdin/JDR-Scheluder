@@ -57,9 +57,9 @@ public class MessageManager {
 		Guild guild = botEvent.getAnnonceCooker().getGuild();
 		Optional<MessageReaction> traitre = messageAnnonce.getReactions().stream()
 				.filter(reaction -> Statics.NON.equals(reaction.getReactionEmote().getName())).findAny();
-		List<User> non = Optional.empty();
+		List<User> non = new ArrayList<>();
 		if (traitre.isPresent()) {
-			non = traitre.get().getUsers().stream().filter(user -> !channel.getJDA().getSelfUser().equals(user)).collect(Collectors.toList()));
+			non = traitre.get().getUsers().stream().filter(user -> !channel.getJDA().getSelfUser().equals(user)).collect(Collectors.toList());
 		} else {
 			messageAnnonce.addReaction(Statics.NON).complete();
 		}
@@ -113,7 +113,7 @@ public class MessageManager {
 				messageCooker.editMessage(format(BotMessage.EST_PAS_LA, getUsername(guild, non.get(0)))).complete();
 			} else {
 				List<String> noms = non.stream().map(user -> getUsername(guild, user)).collect(Collectors.toList());
-				String mecreants = String.join(", ", noms.subList(0, noms.size() - 1)) + " et " + noms.get(nons.size() - 1);
+				String mecreants = String.join(", ", noms.subList(0, noms.size() - 1)) + " et " + noms.get(noms.size() - 1);
 				messageCooker.editMessage(format(BotMessage.SONT_PAS_LA, mecreants)).complete();
 			}
 		}
