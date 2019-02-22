@@ -63,7 +63,7 @@ public class MessageManager {
 		} else {
 			messageAnnonce.addReaction(Statics.NON).complete();
 		}
-		if (!non.isEmpty()) {
+		if (non.isEmpty()) {
 			Optional<MessageReaction> elu = messageCooker.getReactions().stream()
 					.filter(reaction -> Statics.OUI.equals(reaction.getReactionEmote().getName())).findAny();
 			Optional<User> oui = Optional.empty();
