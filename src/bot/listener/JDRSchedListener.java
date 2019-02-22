@@ -95,13 +95,18 @@ public class JDRSchedListener extends ListenerAdapter {
 		super.onGenericMessageReaction(event);
 		if(!event.getUser().equals(jda.getSelfUser())) {
 			Event botEvent = datas.get(event.getGuild()).get(event.getChannel());
-			if(event.getMessageId().equals(botEvent.getAnnonceDate().getId())) {
-				if(Statics.OUI.equals(event.getReactionEmote().getName())) {
+			try {
+				if (event.getMessageId().equals(botEvent.getAnnonceDate().getId())) {
+					if (Statics.OUI.equals(event.getReactionEmote().getName())) {
+						refreshMessageCooker(event.getChannel(), botEvent);
+
+					}
+				}
+				if (event.getMessageId().equals(botEvent.getAnnonceCooker().getId())) {
 					refreshMessageCooker(event.getChannel(), botEvent);
 				}
-			}
-			if(event.getMessageId().equals(botEvent.getAnnonceCooker().getId())) {
-				refreshMessageCooker(event.getChannel(), botEvent);
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 	}
