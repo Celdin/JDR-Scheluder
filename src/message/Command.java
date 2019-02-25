@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum Command {
 	START(Statics.START_CMD + "START", ""),
 	COOKER(Statics.START_CMD + "COOKERS", ""),
+	TSOF(Statics.START_CMD + "TSOF", ""),
 	STOP(Statics.START_CMD + "START", "");
 	
 	String text;

@@ -2,6 +2,7 @@ package bot.listener;
 
 import static bot.controler.MessageManager.createMessages;
 import static bot.controler.MessageManager.displayCooker;
+import static bot.controler.MessageManager.displayTsof;
 import static bot.controler.MessageManager.refreshMessageCooker;
 import static message.BotMessage.MAUVAISE_COMMANDE;
 
@@ -56,6 +57,10 @@ public class JDRSchedListener extends ListenerAdapter {
 				case COOKER:
 					botEvent = datas.get(event.getGuild()).get(event.getChannel());
 					displayCooker(botEvent);
+					break;
+				case TSOF:
+					botEvent = datas.get(event.getGuild()).get(event.getChannel());
+					displayTsof(botEvent);
 					break;
 				default:
 					PrivateChannel privateChannel = event.getAuthor().openPrivateChannel().complete();

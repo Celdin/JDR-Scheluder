@@ -16,8 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.omg.PortableInterceptor.NON_EXISTENT;
-
 import data.dataObject.CookerDataObject;
 import data.domain.Event;
 import data.query.CookerQuery;
@@ -125,6 +123,15 @@ public class MessageManager {
 				.sorted(Comparator.comparing(user -> botEvent.getHaveCooked().get(user)).reversed())
 				.map(user -> format(COOKERS, getUsername(annonceDate.getGuild(), user),
 						botEvent.getHaveCooked().get(user).toString()))
+				.collect(Collectors.joining("\n"));
+		annonceDate.getChannel().sendMessage(message).complete();
+
+	}
+
+	public static void displayTsof(Event botEvent) {
+		Message annonceDate = botEvent.getAnnonceDate();
+		String message = botEvent.getHaveCooked().keySet().stream()
+				.map(user -> getUsername(annonceDate.getGuild(), user))
 				.collect(Collectors.joining("\n"));
 		annonceDate.getChannel().sendMessage(message).complete();
 
