@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class DataObject {
+public abstract class DataObject  implements Comparable<DataObject>{
 	public final static String COLUMN_ID  = "ID";
 
 	protected final static String COLUMN_ID_TYPE  = "SERIAL PRIMARY KEY";

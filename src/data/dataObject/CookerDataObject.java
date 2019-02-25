@@ -15,15 +15,18 @@ public class CookerDataObject extends DataObject {
 	public final static String COLUMN_USER_ID  = "USER_ID";
 	public final static String COLUMN_EVENT_ID  = "EVENT_ID";
 	public final static String COLUMN_HAVE_COOKED  = "HAVE_COOKED";
+	public final static String COLUMN_ORDER  = "ORDER";
 
 	private final static String COLUMN_USER_ID_TYPE  = "TEXT";
 	private final static String COLUMN_EVENT_ID_TYPE  = "INT";
 	private final static String COLUMN_HAVE_COOKED_TYPE  = "INT";
+	public final static String COLUMN_ORDER_TYPE  = "INT";
 
 	
 	private String userId;
 	private Integer eventId;
 	private Integer haveCooked;
+	private Integer order;
 	
 	@Override
 	public String getTableName() {
@@ -33,7 +36,7 @@ public class CookerDataObject extends DataObject {
 	@Override
 	public List<String> getColumnNames() {
 		List<String> columnName = super.getColumnNames();
-		columnName.addAll(Arrays.asList(COLUMN_USER_ID, COLUMN_EVENT_ID, COLUMN_HAVE_COOKED));
+		columnName.addAll(Arrays.asList(COLUMN_USER_ID, COLUMN_EVENT_ID, COLUMN_HAVE_COOKED, COLUMN_ORDER));
 		return columnName;
 	}
 
@@ -43,6 +46,7 @@ public class CookerDataObject extends DataObject {
 		columnType.put(COLUMN_USER_ID, COLUMN_USER_ID_TYPE);
 		columnType.put(COLUMN_EVENT_ID, COLUMN_EVENT_ID_TYPE);
 		columnType.put(COLUMN_HAVE_COOKED, COLUMN_HAVE_COOKED_TYPE);
+		columnType.put(COLUMN_ORDER, COLUMN_ORDER_TYPE);
 		return columnType;
 	}
 
@@ -57,6 +61,8 @@ public class CookerDataObject extends DataObject {
 			return eventId;
 		case COLUMN_HAVE_COOKED:
 			return haveCooked;
+		case COLUMN_ORDER:
+			return order;
 		default:
 			return null;
 		}
@@ -75,8 +81,18 @@ public class CookerDataObject extends DataObject {
 		case COLUMN_HAVE_COOKED:
 			haveCooked = (Integer) object;
 			break;
+		case COLUMN_ORDER:
+			order = (Integer) object;
+			break;
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public int compareTo(DataObject arg0) {
+		return (arg0 instanceof CookerDataObject)?
+		order.compareTo(((CookerDataObject)arg0).order):
+			0;
 	}
 }

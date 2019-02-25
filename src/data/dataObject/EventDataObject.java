@@ -86,4 +86,9 @@ public class EventDataObject extends DataObject {
 			break;
 		}
 	}
+
+	@Override
+	public int compareTo(DataObject o) {
+		return 0;
+	}
 }

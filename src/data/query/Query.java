@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -45,6 +46,7 @@ public abstract class Query<T extends DataObject> {
 		}
 		statement.close();
 		result.close();
+		Collections.sort(dataObjects);
 		return dataObjects;
 	}
 
