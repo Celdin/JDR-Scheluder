@@ -128,10 +128,14 @@ public class MessageManager {
 
 	}
 
-	public static void displayTsof(Event botEvent) {
+	public static void displayTsof(Event botEvent) throws SQLException {
 		Message annonceDate = botEvent.getAnnonceDate();
-		String message = botEvent.getHaveCooked().keySet().stream()
-				.map(user -> getUsername(annonceDate.getGuild(), user))
+		Guild guild = annonceDate.getGuild();
+		EventQuery eventQuery = new EventQuery();
+		CookerQuery cookerQuery = new CookerQuery();
+		List<CookerDataObject> cookerDataObject = cookerQuery.getCookerByEventId(eventQuery.getId(botEvent));
+		String message = cookerDataObject.stream()
+				.map(user -> getUsername(guild, guild.getJDA().getUserById(user.getUserId())))
 				.collect(Collectors.joining("\n"));
 		annonceDate.getChannel().sendMessage(message).complete();
 
