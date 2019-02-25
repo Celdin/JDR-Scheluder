@@ -135,6 +135,7 @@ public class MessageManager {
 		CookerQuery cookerQuery = new CookerQuery();
 		List<CookerDataObject> cookerDataObject = cookerQuery.getCookerByEventId(eventQuery.getId(botEvent));
 		String message = cookerDataObject.stream()
+				.sorted()
 				.map(user -> getUsername(guild, guild.getJDA().getUserById(user.getUserId())))
 				.collect(Collectors.joining("\n"));
 		annonceDate.getChannel().sendMessage(message).complete();
