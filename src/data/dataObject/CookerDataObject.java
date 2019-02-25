@@ -15,7 +15,7 @@ public class CookerDataObject extends DataObject {
 	public final static String COLUMN_USER_ID  = "USER_ID";
 	public final static String COLUMN_EVENT_ID  = "EVENT_ID";
 	public final static String COLUMN_HAVE_COOKED  = "HAVE_COOKED";
-	public final static String COLUMN_ORDER  = "ORDER";
+	public final static String COLUMN_ORDER  = "ORDRE";
 
 	private final static String COLUMN_USER_ID_TYPE  = "TEXT";
 	private final static String COLUMN_EVENT_ID_TYPE  = "INT";
