@@ -40,7 +40,7 @@ public class DataUtils {
 					event.setAnnonceCooker(channel.getMessageById(eventDO.getAnnonceCookerId()).complete());
 					event.setAnnonceDate(channel.getMessageById(eventDO.getAnnonceDateId()).complete());
 				} catch (ErrorResponseException e) {
-					System.err.println("Message non retrouvé.");
+					System.err.println("Message non retrouvÃ©.");
 				}
 				Map<User, Integer> cookers = new HashMap<>();
 				for(CookerDataObject cookerDO : cookerQuery.getCookerByEventId(eventDO.getId())) {
