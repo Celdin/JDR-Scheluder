@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.OptionalInt;
 
 import data.dataObject.CookerDataObject;
 import data.dataObject.EventDataObject;
@@ -69,6 +70,8 @@ public class CookerQuery extends Query<CookerDataObject> {
 				toSave.setEventId(eventId);
 				toSave.setUserId(entry.getKey().getId());
 				toSave.setHaveCooked(entry.getValue());
+				OptionalInt maxOrder = getAll().stream().mapToInt(cook -> cook.getOrder()).max();
+				toSave.setOrder(maxOrder.isPresent()?maxOrder.getAsInt() + 1:0);
 				insert(toSave);
 			} else {
 				toSave.setHaveCooked(entry.getValue());
