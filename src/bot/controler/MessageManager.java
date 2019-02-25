@@ -101,7 +101,6 @@ public class MessageManager {
 						}
 					}
 					coupables = new ArrayList<>(involved.get(Collections.min(involved.keySet())));
-					Collections.shuffle(coupables);
 					messageCooker.editMessage(BotMessage.WHO_COOK + "\n" + getUsername(guild, coupables.get(0)) + " ?")
 							.complete();
 				} else {
