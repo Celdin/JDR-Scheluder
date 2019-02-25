@@ -28,44 +28,44 @@ import service.DataUtils;
 
 @AllArgsConstructor
 public class JDRSchedListener extends ListenerAdapter {
-	
+
 	private Map<Guild, Map<MessageChannel, Event>> datas;
 	private JDA jda;
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 		super.onMessageReceived(event);
-		if(!event.getAuthor().equals(jda.getSelfUser())) {
+		if (!event.getAuthor().equals(jda.getSelfUser())) {
 			Message message = event.getMessage();
 			Event botEvent = null;
 			Command command = Command.findByCommand(message.getContentDisplay().split(" ")[0]);
-			if(command != null) {
-				switch (command) {
-				case START:
-					botEvent = initEvent(event);
-					createMessages(event.getChannel(), botEvent);
-					try {
+			if (command != null) {
+				try {
+					switch (command) {
+					case START:
+						botEvent = initEvent(event);
+						createMessages(event.getChannel(), botEvent);
 						EventQuery.create(botEvent);
 						EventScheduler.update(DataUtils.retriveAllEvents(jda));
-					} catch (SQLException e) {
-						e.printStackTrace();
+						break;
+					case STOP:
+						delete(event);
+						break;
+					case COOKER:
+						botEvent = datas.get(event.getGuild()).get(event.getChannel());
+						displayCooker(botEvent);
+						break;
+					case TSOF:
+						botEvent = datas.get(event.getGuild()).get(event.getChannel());
+						displayTsof(botEvent);
+						break;
+					default:
+						PrivateChannel privateChannel = event.getAuthor().openPrivateChannel().complete();
+						privateChannel.sendMessage(MAUVAISE_COMMANDE);
+						break;
 					}
-					break;
-				case STOP:
-					delete(event);
-					break;
-				case COOKER:
-					botEvent = datas.get(event.getGuild()).get(event.getChannel());
-					displayCooker(botEvent);
-					break;
-				case TSOF:
-					botEvent = datas.get(event.getGuild()).get(event.getChannel());
-					displayTsof(botEvent);
-					break;
-				default:
-					PrivateChannel privateChannel = event.getAuthor().openPrivateChannel().complete();
-					privateChannel.sendMessage(MAUVAISE_COMMANDE);
-					break;
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -73,13 +73,13 @@ public class JDRSchedListener extends ListenerAdapter {
 
 	private Event initEvent(MessageReceivedEvent event) {
 		Event botEvent = null;
-		if(!datas.containsKey(event.getGuild())) {
+		if (!datas.containsKey(event.getGuild())) {
 			datas.put(event.getGuild(), new HashMap<>());
 		}
-		if(!datas.get(event.getGuild()).containsKey(event.getChannel())) {
+		if (!datas.get(event.getGuild()).containsKey(event.getChannel())) {
 			botEvent = new Event();
 			datas.get(event.getGuild()).put(event.getChannel(), botEvent);
-		}else {
+		} else {
 			delete(event);
 			botEvent = datas.get(event.getGuild()).get(event.getChannel());
 		}
@@ -94,11 +94,11 @@ public class JDRSchedListener extends ListenerAdapter {
 		}
 		datas.get(event.getGuild()).remove(event.getChannel());
 	}
-	
+
 	@Override
 	public void onGenericMessageReaction(GenericMessageReactionEvent event) {
 		super.onGenericMessageReaction(event);
-		if(!event.getUser().equals(jda.getSelfUser())) {
+		if (!event.getUser().equals(jda.getSelfUser())) {
 			Event botEvent = datas.get(event.getGuild()).get(event.getChannel());
 			try {
 				if (event.getMessageId().equals(botEvent.getAnnonceDate().getId())) {
