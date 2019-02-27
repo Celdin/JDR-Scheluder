@@ -40,7 +40,7 @@ public class MessageManager {
 		}
 		Message annonceDateMessage = channel.sendMessage(String.format(BotMessage.ANNONCE,
 				DATE_FORMAT.format(calendar.getTime()), TIME_FORMAT.format(calendar.getTime()))).complete();
-		annonceDateMessage.addReaction(Statics.OUI).complete();
+		annonceDateMessage.addReaction(Statics.NON).complete();
 		botEvent.setAnnonceDate(annonceDateMessage);
 		Message annonceCookerMessage = channel.sendMessage(BotMessage.WHO_COOK).complete();
 		annonceCookerMessage.addReaction(Statics.OUI).complete();
