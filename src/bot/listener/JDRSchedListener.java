@@ -9,6 +9,7 @@ import static message.BotMessage.MAUVAISE_COMMANDE;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.DelayQueue;
 
 import data.domain.Event;
 import data.query.EventQuery;
@@ -98,21 +99,20 @@ public class JDRSchedListener extends ListenerAdapter {
 	@Override
 	public void onGenericMessageReaction(GenericMessageReactionEvent event) {
 		super.onGenericMessageReaction(event);
-		if (!event.getUser().equals(jda.getSelfUser())) {
+		try {
+			datas = DataUtils.retriveAll(jda);
 			Event botEvent = datas.get(event.getGuild()).get(event.getChannel());
-			try {
-				if (event.getMessageId().equals(botEvent.getAnnonceDate().getId())) {
-					if (Statics.NON.equals(event.getReactionEmote().getName())) {
-						refreshMessageCooker(event.getChannel(), botEvent);
-
-					}
-				}
-				if (event.getMessageId().equals(botEvent.getAnnonceCooker().getId())) {
+			if (event.getMessageId().equals(botEvent.getAnnonceDate().getId())) {
+				if (Statics.NON.equals(event.getReactionEmote().getName())) {
 					refreshMessageCooker(event.getChannel(), botEvent);
+
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
 			}
+			if (event.getMessageId().equals(botEvent.getAnnonceCooker().getId())) {
+				refreshMessageCooker(event.getChannel(), botEvent);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 }
