@@ -38,7 +38,7 @@ public class DataUtils {
 				TextChannel channel = guild.getTextChannelById(eventDO.getChannelId());
 				Event event = new Event();
 				try {
-					if(eventDO.getAnnonceCookerId() == null || eventDO.getAnnonceDateId()) {
+					if(eventDO.getAnnonceCookerId() == null || eventDO.getAnnonceDateId() == null) {
 						MessageManager.createMessages(channel, event);
 					} else {
 						event.setAnnonceCooker(channel.getMessageById(eventDO.getAnnonceCookerId()).complete());
