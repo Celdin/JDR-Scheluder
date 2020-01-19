@@ -1,5 +1,6 @@
 package service;
 
+import bot.controler.MessageManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,8 +38,12 @@ public class DataUtils {
 				TextChannel channel = guild.getTextChannelById(eventDO.getChannelId());
 				Event event = new Event();
 				try {
-					event.setAnnonceCooker(channel.getMessageById(eventDO.getAnnonceCookerId()).complete());
-					event.setAnnonceDate(channel.getMessageById(eventDO.getAnnonceDateId()).complete());
+					if(eventDO.getAnnonceCookerId() == null || eventDO.getAnnonceDateId()) {
+						MessageManager.createMessages(channel, event);
+					} else {
+						event.setAnnonceCooker(channel.getMessageById(eventDO.getAnnonceCookerId()).complete());
+						event.setAnnonceDate(channel.getMessageById(eventDO.getAnnonceDateId()).complete());
+					}
 				} catch (ErrorResponseException e) {
 					System.err.println("Message non retrouvé.");
 				}
